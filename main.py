@@ -27,7 +27,7 @@ st.set_page_config(
 def get_gcp_credentials():
     """Load GCP credentials from Streamlit secrets and create a credentials object."""
     # creds_json = json.loads(st.secrets["gcp"]["credentials"])
-    creds_json = st.secrets["gcp"]["credentials"]
+    creds_json = dict(st.secrets["gcp"]["credentials"][3:][:-3])
     credentials = service_account.Credentials.from_service_account_info(creds_json)
     return credentials
 
