@@ -31,7 +31,7 @@ model = VertexAIEmbeddings(
 
     )
 
-df = pd.read_csv(r"C:\Users\vn57bij\Downloads\examples 2(in) (1).csv")
+df = pd.read_csv(r"examples.csv")
 data = df.apply(lambda row: {"input": row['PROMPT'], "query": row['OUTPUT']}, axis=1).to_list()
 examples = {item['input']: item['query'] for item in data}
 
