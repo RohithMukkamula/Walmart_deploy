@@ -1,0 +1,7 @@
+streamlit==1.35.0
+numpy==1.26.4
+google-cloud-bigquery==3.24.0
+google-auth==2.29.0
+langchain-core==0.2.7  # Example version, adjust as necessary
+langchain-community==0.2.5  # Example version, adjust as necessary
+langchain-google-vertexai==1.0.5  # Example version, adjust as necessary
