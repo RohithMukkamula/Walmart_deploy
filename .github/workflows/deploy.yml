@@ -31,4 +31,4 @@ jobs:
 
     - name: Deploy to Streamlit
       run: |
-        streamlit run your_app.py
+        streamlit run main.py
