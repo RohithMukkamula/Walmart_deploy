@@ -1,0 +1,111 @@
+PROMPT,OUTPUT
+What should be the pain point which i should be mainly focusing?,"SELECT 
+    pp_rtn,
+    pp_crm,
+    pp_sub,
+    pp_postsub,
+    pp_presub,
+    pp_fast_null,
+    pp_fast_early,
+    pp_fast_late,
+    pp_cncl,
+    pp_mci
+FROM 
+    datawhiz.perfect_order_data"
+How can I improve my NPS score by 5 points for this store/region?,"SELECT
+  store_nbr,
+  Region,
+  AVG(ltr) + 5 AS improved_NPS_score
+FROM
+  datawhiz.perfect_order_data
+WHERE
+  cust_class = 'detractor' OR cust_class = 'passive'
+GROUP BY
+  store_nbr,
+  Region"
+What are my top performing stores from Region 1?,"SELECT store_nbr, SUM(Total_sales) AS total_sales 
+FROM datawhiz.perfect_order_data 
+WHERE Region = 1 
+GROUP BY store_nbr 
+ORDER BY total_sales DESC 
+LIMIT 10;"
+What are my most concerned stores in region 1 and what are the reasons behind these?,"SELECT store_nbr, COUNT(*) AS concern_count, AVG(days_btwn_odrdt_delvr_dt) AS avg_delivery_delay 
+FROM datawhiz.perfect_order_data 
+WHERE Region = 1 
+GROUP BY store_nbr 
+ORDER BY concern_count DESC;"
+Which stores has low perfect order percentage in Region 1 for last one month?,"SELECT store_nbr, AVG(perfect_order_flag) AS perfect_order_percentage
+FROM datawhiz.perfect_order_data
+WHERE Region = 1
+AND order_placed_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)
+GROUP BY store_nbr
+ORDER BY perfect_order_percentage ASC"
+What are the pain points distribution for imperfect orders for the above stores?,"SELECT store_nbr, COUNT(
+*
+) as num_imperfect_ordersFROM datawhiz.perfect_order_data WHERE perfect_order_flag
+=
+0GROUP BY store_nbr"
+Retrieve orders where the maximum item price is above $1000.,"SELECT
+*
+FROM datawhiz.perfect_order_data WHERE max_item_price
+>
+1000"
+Rank orders by their total sales within each region.,"SELECT Region, SUM(Total_sales) AS Total_Sales
+FROM datawhiz.perfect_order_data
+GROUP BY Region
+ORDER BY Total_Sales DESC"
+"Find customers who placed more than 10 orders, spent over $5000 in total, and had at least one pain point in the last year.","SELECT cust_id, COUNT(order_nbr) AS order_count, SUM(Total_sales) AS total_spent FROM 
+datawhiz.perfect_order_data WHERE order_placed_date
+>=
+DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)GROUP BY cust_id HAVING order_count
+>
+10
+AND
+total_spent
+>
+5000"
+Identify customers who were highly engaged last year and have placed at least one order this year.,"SELECT DISTINCT cust_idFROM datawhiz.Perfect_Order_DataWHERE order_placed_date
+>=
+'2022-01-01'
+AND
+order_placed_date
+<
+'2023-01-01'
+AND
+total_orders_prev_52_weeks
+>
+0"
+"Categorize orders into 'On-time', 'Late', and 'Very Late' based on the days between order and delivery dates.","SELECT
+  order_nbr,
+  CASE
+    WHEN days_btwn_odrdt_delvr_dt <= 0 THEN 'On-time'
+    WHEN days_btwn_odrdt_delvr_dt <= 3 THEN 'Late'
+    ELSE 'Very Late'
+  END AS delivery_status
+FROM
+  datawhiz.perfect_order_data"
+how many orders are there in region 3,"SELECT COUNT(*) AS order_count
+FROM datawhiz.perfect_order_data
+WHERE Region = 3"
+How many orders are there in region 1?,"SELECT COUNT(*) AS order_count
+FROM datawhiz.perfect_order_data
+WHERE Region = 1"
+How many orders are there in region 2?,"SELECT COUNT(*) AS order_count
+FROM datawhiz.perfect_order_data
+WHERE Region = 2"
+calculate the average customer satisfaction score for a region by quarter.,"SELECT REGION_NBR,fiscal_qtr_nbr,AVG(csat) AS avg_csat FROM datawhiz.ca_cx_ecomm_nps_data "
+calculate the average order value ,SELECT AVG(sales / line_visits_or_orders) AS avg_order_value FROM datawhiz.ca_cx_ecomm_nps_data;
+Finds stores with a cancellation rate exceeding 10%,"SELECT store_nbr,(no_of_cancelled_orders / line_visits_or_orders) * 100 AS cancellation_rate FROM datawhiz.ca_cx_ecomm_nps_data HAVING cancellation_rate > 10;"
+find the average staffing efficiency,SELECT AVG(actual_by_demand_hrs) AS avg_staffing_efficiency FROM datawhiz.ca_cx_ecomm_nps_data;
+What is the total number of orders placed in the last fiscal quarter?,SELECT SUM(line_visits_or_orders) AS total_orders FROM datawhiz.ca_cx_ecomm_nps_data;
+What was the best-selling product category in a particular region for a specific month?,"SELECT REGION_NBR,calendar_month_nbr,product_category,SUM(sales) AS total_sales FROM datawhiz.ca_cx_ecomm_nps_data GROUP BY REGION_NBR, calendar_month_nbr, product_category ORDER BY REGION_NBR, calendar_month_nbr, total_sales DESC LIMIT 1;
+
+"
+Which stores have the highest number of customer visits?,"SELECT store_nbr, SUM(line_visits_or_orders) AS total_visits FROM datawhiz.ca_cx_ecomm_nps_data GROUP BY store_nbr ORDER BY total_visits DESC LIMIT 10;"
+What is the total revenue generated in the last fiscal year?,SELECT SUM(sales) AS total_revenue FROM datawhiz.ca_cx_ecomm_nps_data;
+Which region has the highest average customer satisfaction score?,"SELECT REGION_NBR,  AVG(csat) AS avg_csat FROM datawhiz.ca_cx_ecomm_nps_data GROUP BY REGION_NBR ORDER BY avg_csat DESC LIMIT 1;"
+How does the average order value change based on the day of the week?,"SELECT calendar_day_of_week, AVG(sales / line_visits_or_orders) AS avg_order_value FROM datawhiz.ca_cx_ecomm_nps_data GROUP BY calendar_day_of_week ORDER BY calendar_day_of_week;"
+Are there any product categories with a consistently high cancellation rate?,"SELECT product_category, AVG(no_of_cancelled_orders / line_visits_or_orders) * 100 AS avg_cancellation_rate FROM datawhiz.ca_cx_ecomm_nps_data GROUP BY product_category HAVING avg_cancellation_rate > 10;"
+Is there a correlation between order satisfaction (OSAT) and order value?,"SELECT osat,AVG(sales / line_visits_or_orders) AS avg_order_value FROM datawhiz.ca_cx_ecomm_nps_data GROUP BY osat ORDER BY osat;"
+
+  
