@@ -36,6 +36,7 @@ def get_gcp_credentials():
     #     # If the secret is a string, parse it into a dictionary
     #     creds_dict = json.loads(st.secrets["gcp"]["credentials"])
     creds_json = ast.literal_eval(st.secrets["gcp"]["credentials"][3:][:-3])
+    st.write(type(creds_json))
     credentials = service_account.Credentials.from_service_account_info(creds_json)
     return credentials
 
