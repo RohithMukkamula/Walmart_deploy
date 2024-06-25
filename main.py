@@ -5,6 +5,7 @@ import regex as re
 import json
 import warnings
 from google.oauth2 import service_account
+import ast
 
 from langchain.tools import Tool
 from langchain_core.tools import tool
@@ -28,14 +29,14 @@ def get_gcp_credentials():
     """Load GCP credentials from Streamlit secrets and create a credentials object."""
     st.write(st.secrets["gcp"]["credentials"])
 
-    # Check if the secret is already a dictionary (usual case)
-    if isinstance(st.secrets["gcp"]["credentials"], dict):
-        creds_dict = st.secrets["gcp"]["credentials"]
-    else:
-        # If the secret is a string, parse it into a dictionary
-        creds_dict = json.loads(st.secrets["gcp"]["credentials"])
-    #creds_json = dict(st.secrets["gcp"]["credentials"][3:][:-3])
-    credentials = service_account.Credentials.from_service_account_info(creds_dict)
+    # # Check if the secret is already a dictionary (usual case)
+    # if isinstance(st.secrets["gcp"]["credentials"], dict):
+    #     creds_dict = st.secrets["gcp"]["credentials"]
+    # else:
+    #     # If the secret is a string, parse it into a dictionary
+    #     creds_dict = json.loads(st.secrets["gcp"]["credentials"])
+    creds_json = ast.literal_eval(st.secrets["gcp"]["credentials"][3:][:-3])
+    credentials = service_account.Credentials.from_service_account_info(creds_json)
     return credentials
 
 def get_bigquery_client():
