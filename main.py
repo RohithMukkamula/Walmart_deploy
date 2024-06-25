@@ -4,6 +4,8 @@ import pandas as pd
 import regex as re
 import json
 import warnings
+from google.oauth2 import service_account
+
 from langchain.tools import Tool
 from langchain_core.tools import tool
 from langchain_community.agent_toolkits import create_sql_agent
@@ -22,16 +24,31 @@ st.set_page_config(
 )
 
 
+def get_gcp_credentials():
+    """Load GCP credentials from Streamlit secrets and create a credentials object."""
+    creds_json = json.loads(st.secrets["gcp"]["credentials"])
+    credentials = service_account.Credentials.from_service_account_info(creds_json)
+    return credentials
+
+def get_bigquery_client():
+    """Create a BigQuery client using credentials from Streamlit secrets."""
+    credentials = get_gcp_credentials()
+    client = bigquery.Client(credentials=credentials, project=credentials.project_id)
+    return client
+
+
+
 
 
 model = VertexAIEmbeddings(
         model_name = 'textembedding-gecko@003',
         pproject="wmt-ca-customer-insights-dev",
         location="us-central1"
+        credentials = get_gcp_credentials()
 
     )
 
-df = pd.read_csv(r"examples.csv")
+df = pd.read_csv(r"C:\Users\vn57bij\Downloads\examples 2(in) (1).csv")
 data = df.apply(lambda row: {"input": row['PROMPT'], "query": row['OUTPUT']}, axis=1).to_list()
 examples = {item['input']: item['query'] for item in data}
 
@@ -98,7 +115,7 @@ def get_data_dictionary(table_name: str) -> str:
         name = name_ref.split('_Data_Dict')[0] + '_Data_Dict'
         st.write(name)
         # Execute the query to get the data dictionary.
-        client = client = bigquery.Client()
+        client = get_bigquery_client()
         query_job = client.query(f'SELECT * FROM {name}')  # API request
         # Wait for the query to finish and get the results.
         rows = query_job.result()
@@ -167,6 +184,7 @@ def main():
                 project="wmt-ca-customer-insights-dev",
                 location="us-central1",
                 model="gemini-1.5-flash"
+                credentials = get_gcp_credentials()
             )
 
             
