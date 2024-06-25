@@ -43,7 +43,7 @@ def get_bigquery_client():
 model = VertexAIEmbeddings(
         model_name = 'textembedding-gecko@003',
         pproject="wmt-ca-customer-insights-dev",
-        location="us-central1"
+        location="us-central1",
         credentials = get_gcp_credentials()
 
     )
@@ -183,7 +183,7 @@ def main():
             llm = VertexAI(
                 project="wmt-ca-customer-insights-dev",
                 location="us-central1",
-                model="gemini-1.5-flash"
+                model="gemini-1.5-flash",
                 credentials = get_gcp_credentials()
             )
 
