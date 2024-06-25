@@ -27,13 +27,13 @@ st.set_page_config(
 def get_gcp_credentials():
     """Load GCP credentials from Streamlit secrets and create a credentials object."""
     st.write(st.secrets["gcp"]["credentials"])
-    try:
-        # Check if the secret is already a dictionary (usual case)
-        if isinstance(st.secrets["gcp"]["credentials"], dict):
-            creds_dict = st.secrets["gcp"]["credentials"]
-        else:
-            # If the secret is a string, parse it into a dictionary
-            creds_dict = json.loads(st.secrets["gcp"]["credentials"])
+
+    # Check if the secret is already a dictionary (usual case)
+    if isinstance(st.secrets["gcp"]["credentials"], dict):
+        creds_dict = st.secrets["gcp"]["credentials"]
+    else:
+        # If the secret is a string, parse it into a dictionary
+        creds_dict = json.loads(st.secrets["gcp"]["credentials"])
     #creds_json = dict(st.secrets["gcp"]["credentials"][3:][:-3])
     credentials = service_account.Credentials.from_service_account_info(creds_dict)
     return credentials
