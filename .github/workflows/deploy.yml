@@ -1,0 +1,34 @@
+name: Deploy to Streamlit
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Set up GCP Credentials
+      env:
+        GCP_SERVICE_ACCOUNT_JSON: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      run: |
+        echo "$GCP_SERVICE_ACCOUNT_JSON" > ./gcp-service-account.json
+        echo "GOOGLE_APPLICATION_CREDENTIALS=./gcp-service-account.json" >> $GITHUB_ENV
+
+    - name: Deploy to Streamlit
+      run: |
+        streamlit run your_app.py
